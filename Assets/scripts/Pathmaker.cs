@@ -16,11 +16,16 @@ public class Pathmaker : MonoBehaviour {
 
 //	DECLARE CLASS MEMBER VARIABLES:
 //	Declare a private integer called counter that starts at 0; 		// counter var will track how many floor tiles I've instantiated
+	private int counter = 0;
 //	Declare a public Transform called floorPrefab, assign the prefab in inspector;
+	public Transform floorPrefab;
 //	Declare a public Transform called pathmakerSpherePrefab, assign the prefab in inspector; 		// you'll have to make a "pathmakerSphere" prefab later
+	public Transform pathmakerSpherePrefab;
+	//	- (hint: declare a "public static int" and have each Pathmaker check this "globalTileCount", somewhere in your code? if there are already enough tiles, then maybe the Pathmaker could Destroy my game object
+	public static int globalTileCount = 0;
 
-
-	void Update () {
+	void Update () 
+	{
 //		If counter is less than 50, then:
 //			Generate a random number from 0.0f to 1.0f;
 //			If random number is less than 0.25f, then rotate myself 90 degrees;
@@ -33,6 +38,46 @@ public class Pathmaker : MonoBehaviour {
 //			Increment counter;
 //		Else:
 //			Destroy my game object; 		// self destruct if I've made enough tiles already
+
+		if (counter < 50)
+		{
+			float random = Random.Range(0.0f, 1.0f);
+
+			if (random < 0.25f)
+			{
+				//Rotate 90 Degrees
+				transform.Rotate(0,90,0);
+			}
+			
+			else if (random >= 0.25f && random <= 0.5f)
+			{
+				//Rotate -90 degrees
+				transform.Rotate(0,-90,0);
+			}
+			
+			else if (random >= 0.99f && random <= 1.0f)
+			{ 
+				//Instantiate a pathmakerSpherePrefab clone at current posistion
+				Instantiate(pathmakerSpherePrefab, transform.position,Quaternion.identity);
+			}
+			
+			Instantiate(floorPrefab, transform.position,Quaternion.identity);
+			transform.position += transform.forward;
+			counter++;
+			globalTileCount++;
+		}
+
+		else
+		{
+			Destroy(this.gameObject);
+		}
+
+		if (globalTileCount >= 500)
+		{
+			Destroy(gameObject);
+		}
+
+		
 	}
 
 } // end of class scope
